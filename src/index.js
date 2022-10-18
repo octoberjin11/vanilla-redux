@@ -12,7 +12,7 @@ const number = document.querySelector("span");
 
 const reducer = () => {};
 
-const store = createStore();
+const store = createStore(reducer);
 //createStore<any, Action<any>, any, any>(reducer: Reducer<any, Action<any>>, enhancer?:
 //createStore 함수를 사용하려면 reducer가 있어야 한다. reducer는 함수(function)여야 한다.
 
