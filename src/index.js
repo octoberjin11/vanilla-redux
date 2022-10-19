@@ -4,6 +4,8 @@ const add = document.getElementById("add");
 const minus = document.getElementById("minus");
 const number = document.querySelector("span");
 
+number.innerText = 0;
+
 // store: Data 를 담는 저장소
 // state: 변경이 필요한 Data
 // reducer: Data 를 modify 하는 function
@@ -18,7 +20,7 @@ const countModifier = (state = 0, action) => {
 
   //Action : redux에서 function을 부를 때 쓰는 두 번째 parameter 혹은 argument으로 reducer와 소통하기 위한 방법
 
-  console.log(state, action);
+  //console.log(state, action);
 
   if (action.type === "ADD") {
     return state + 1;
@@ -31,13 +33,24 @@ const countModifier = (state = 0, action) => {
 
 const countStore = createStore(countModifier);
 
+//Subscribe : store 안에 있는 변화 감지
+//store.subscribe(func); // store안의 변화를 감지하면 func 실행
+const onChange = () => {
+  number.innerText = countStore.getState();
+};
+countStore.subscribe(onChange);
+
 //Reducer에게 Action을 보내는 방법 : store.dispatch({key: value});
-countStore.dispatch({ type: "ADD" });
+//countStore.dispatch({ type: "ADD" });
 //dispatch와 함께 countModifier로 메세지를 보낸다.
 
-countStore.dispatch({ type: "ADD" });
-countStore.dispatch({ type: "ADD" });
-countStore.dispatch({ type: "ADD" });
-countStore.dispatch({ type: "MINUS" });
+const handleAdd = () => {
+  countStore.dispatch({ type: "ADD" });
+};
 
-console.log(countStore.getState());
+const handleMinus = () => {
+  countStore.dispatch({ type: "MINUS" });
+};
+
+add.addEventListener("click", handleAdd);
+minus.addEventListener("click", handleMinus);
