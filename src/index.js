@@ -6,6 +6,9 @@ const number = document.querySelector("span");
 
 number.innerText = 0;
 
+const ADD = "ADD";
+const MINUS = "MINUS";
+
 // store: Data 를 담는 저장소
 // state: 변경이 필요한 Data
 // reducer: Data 를 modify 하는 function
@@ -20,14 +23,13 @@ const countModifier = (state = 0, action) => {
 
   //Action : redux에서 function을 부를 때 쓰는 두 번째 parameter 혹은 argument으로 reducer와 소통하기 위한 방법
 
-  //console.log(state, action);
-
-  if (action.type === "ADD") {
-    return state + 1;
-  } else if (action.type === "MINUS") {
-    return state - 1;
-  } else {
-    return state;
+  switch (action.type) {
+    case ADD:
+      return state + 1;
+    case MINUS:
+      return state - 1;
+    default:
+      return state;
   }
 };
 
@@ -41,15 +43,15 @@ const onChange = () => {
 countStore.subscribe(onChange);
 
 //Reducer에게 Action을 보내는 방법 : store.dispatch({key: value});
-//countStore.dispatch({ type: "ADD" });
+//countStore.dispatch({ type: ADD });
 //dispatch와 함께 countModifier로 메세지를 보낸다.
 
 const handleAdd = () => {
-  countStore.dispatch({ type: "ADD" });
+  countStore.dispatch({ type: ADD });
 };
 
 const handleMinus = () => {
-  countStore.dispatch({ type: "MINUS" });
+  countStore.dispatch({ type: MINUS });
 };
 
 add.addEventListener("click", handleAdd);
