@@ -41,7 +41,8 @@ const reducer = (state = [], action) => {
       return [{ text: action.text, id: action.id }, ...state];
 
     case DELETE_TODO:
-      return [];
+      return state.filter((toDo) => toDo.id !== action.id);
+    //filter 함수로 새로운 array를 return 함 (state를 mutate 하지 않고 새로운 array를 return 함)
     default:
       return state;
   }
@@ -57,7 +58,8 @@ const dispatchAddToDo = (text, toDate) => {
 };
 
 const dispatchDeleteToDo = (e) => {
-  const id = e.target.parentNode.id;
+  //HTML로부터 받아오는 id는 아마 String의 형태일테니 문자열을 숫자로 변환하는 함수인 parseInt을 사용한다.
+  const id = parseInt(e.target.parentNode.id);
   //store.dispatch({ type: DELETE_TODO, id: id });
   store.dispatch(deleteToDo(id));
 };
@@ -77,6 +79,8 @@ const paintToDos = () => {
     ul.appendChild(li);
   });
 };
+
+//filter() 는 테스트를 통과한 모든 element들로 새로운 array를 만든다
 
 store.subscribe(paintToDos);
 
