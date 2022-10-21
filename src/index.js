@@ -7,6 +7,21 @@ const ul = document.querySelector("ul");
 const ADD_TODO = "ADD_TODO";
 const DELETE_TODO = "DELETE_TODO";
 
+// reducer 위에 위치. 오로지 action만을 return.
+const addToDo = (text, id) => {
+  return {
+    type: ADD_TODO,
+    text,
+    id,
+  };
+};
+const deleteToDo = (id) => {
+  return {
+    type: DELETE_TODO,
+    id,
+  };
+};
+
 // state는 single source of truth이며, read-only이다
 // store을 수정할 수 있는 유일한 방법은 action을 보내는 방법뿐이다.
 // state를 mutate하지 말아야한다.
@@ -18,7 +33,13 @@ const DELETE_TODO = "DELETE_TODO";
 const reducer = (state = [], action) => {
   switch (action.type) {
     case ADD_TODO:
-      return [...state, { text: action.text, id: action.id }];
+      //return [...state, { text: action.text, id: action.id }];
+      //새로운 array를 return 하고 있기 때문에 이 array가 보이는 방식을 수정할 수 있다.
+      //그래서 { text: action.text, id: action.id }을 마지막에 두는 대신에 앞으로 옮긴다.
+      //이러면 새로운 todo가 array의 첫 부분에 있게 된다.
+
+      return [{ text: action.text, id: action.id }, ...state];
+
     case DELETE_TODO:
       return [];
     default:
@@ -30,6 +51,35 @@ const store = createStore(reducer);
 
 store.subscribe(() => console.log(store.getState()));
 
+const dispatchAddToDo = (text, toDate) => {
+  //store.dispatch({ type: ADD_TODO, text, id: toDate });
+  store.dispatch(addToDo(text, toDate));
+};
+
+const dispatchDeleteToDo = (e) => {
+  const id = e.target.parentNode.id;
+  //store.dispatch({ type: DELETE_TODO, id: id });
+  store.dispatch(deleteToDo(id));
+};
+
+const paintToDos = () => {
+  const toDos = store.getState();
+  ul.innerHTML = ""; //매번 store가 바뀔때마다 const toDos = store.getState(); 여기다 모든 것들을 repainting 하기 때문에 li가 중복으로 나오는 것을 방지하기 위해 이와 같은 코드를 추가한다.
+
+  toDos.forEach((toDo) => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.innerText = "DEL";
+    btn.addEventListener("click", dispatchDeleteToDo);
+    li.id = toDo.id;
+    li.innerText = toDo.text;
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+};
+
+store.subscribe(paintToDos);
+
 const onSubmit = (e) => {
   e.preventDefault();
 
@@ -38,7 +88,7 @@ const onSubmit = (e) => {
 
   const toDate = Date.now();
 
-  store.dispatch({ type: ADD_TODO, text: toDo, id: toDate });
+  dispatchAddToDo(toDo, toDate);
 };
 
 form.addEventListener("submit", onSubmit);
